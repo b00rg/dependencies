@@ -1,8 +1,7 @@
 from pathlib import Path
 
 with open("generated_requirements.txt", "w") as requirements:
-    cumulative_reqs = set()
-
+    seen_reqs = set()
     for path in Path("./tests/test-repo/.").rglob("*.py"):
         with open(path, "r", encoding="utf-8") as file:
             for line in file:
@@ -19,6 +18,7 @@ with open("generated_requirements.txt", "w") as requirements:
                     
                 if reqs:
                     for req in reqs:
-                        if req not in cumulative_reqs:
-                            requirements.write(req + "\n")
-                            cumulative_reqs.add(req)
+                        base_req = req.split(".")[0]
+                        if base_req not in seen_reqs:
+                            requirements.write(base_req + "\n")
+                            seen_reqs.add(base_req)
